@@ -4,11 +4,16 @@ import { DQNAgent, GameState, Action, Hyperparams } from '../models/DQNAgent';
 interface GameProps {
   hyperparams: Hyperparams;
   isTraining: boolean;
+  ballSpeed: number;
 }
 
 const WINNING_SCORE = 11;
 
-const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
+const Game: React.FC<GameProps> = ({ 
+  hyperparams, 
+  isTraining,
+  ballSpeed
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState({ player: 0, ai: 0 });
   const [agent, setAgent] = useState<DQNAgent | null>(null);
@@ -23,17 +28,27 @@ const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
   const PADDLE_HEIGHT = 60;
   const BALL_SIZE = 10;
   const PADDLE_SPEED = 6;
-  const INITIAL_BALL_SPEED = 5;
+  // Use a base ball speed and multiply by the ballSpeed parameter
+  const BASE_BALL_SPEED = 1;
   
   // Initialize game state
   const [gameState, setGameState] = useState<GameState>({
     ballX: CANVAS_WIDTH / 2,
     ballY: CANVAS_HEIGHT / 2,
-    ballVelX: INITIAL_BALL_SPEED,
-    ballVelY: INITIAL_BALL_SPEED,
+    ballVelX: BASE_BALL_SPEED * ballSpeed,
+    ballVelY: BASE_BALL_SPEED * ballSpeed,
     paddleY: CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2,
     aiPaddleY: CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2
   });
+  
+  // Update ball speed whenever the ballSpeed prop changes
+  useEffect(() => {
+    setGameState(prev => ({
+      ...prev,
+      ballVelX: (prev.ballVelX >= 0 ? 1 : -1) * BASE_BALL_SPEED * ballSpeed,
+      ballVelY: (prev.ballVelY >= 0 ? 1 : -1) * BASE_BALL_SPEED * ballSpeed
+    }));
+  }, [ballSpeed]);
   
   // Key state for player control
   const [keys, setKeys] = useState({
@@ -46,14 +61,14 @@ const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
     setGameState({
       ballX: CANVAS_WIDTH / 2,
       ballY: CANVAS_HEIGHT / 2,
-      ballVelX: INITIAL_BALL_SPEED,
-      ballVelY: INITIAL_BALL_SPEED,
+      ballVelX: BASE_BALL_SPEED * ballSpeed,
+      ballVelY: BASE_BALL_SPEED * ballSpeed,
       paddleY: CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2,
       aiPaddleY: CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2
     });
     setGameOver(false);
     setWinner(null);
-  }, [CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_HEIGHT, INITIAL_BALL_SPEED]);
+  }, [CANVAS_WIDTH, CANVAS_HEIGHT, PADDLE_HEIGHT, ballSpeed]);
 
   const togglePause = () => {
     setIsPaused(!isPaused);
@@ -209,7 +224,7 @@ const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
         
         // Add a bit of randomness to ball direction
         const hitPosition = (newBallY - newPaddleY) / PADDLE_HEIGHT;
-        newBallVelY = INITIAL_BALL_SPEED * (2 * hitPosition - 1);
+        newBallVelY = BASE_BALL_SPEED * ballSpeed * (2 * hitPosition - 1);
         
         // AI gets negative reward when player returns the ball
         reward = -1;
@@ -227,7 +242,7 @@ const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
         
         // Add a bit of randomness to ball direction
         const hitPosition = (newBallY - newAiPaddleY) / PADDLE_HEIGHT;
-        newBallVelY = INITIAL_BALL_SPEED * (2 * hitPosition - 1);
+        newBallVelY = BASE_BALL_SPEED * ballSpeed * (2 * hitPosition - 1);
         
         // AI gets positive reward for returning the ball
         reward = 10;
@@ -246,8 +261,8 @@ const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
         // Reset ball
         newBallX = CANVAS_WIDTH / 2;
         newBallY = CANVAS_HEIGHT / 2;
-        newBallVelX = INITIAL_BALL_SPEED;
-        newBallVelY = (Math.random() * 2 - 1) * INITIAL_BALL_SPEED;
+        newBallVelX = BASE_BALL_SPEED * ballSpeed;
+        newBallVelY = (Math.random() * 2 - 1) * BASE_BALL_SPEED * ballSpeed;
       } else if (newBallX >= CANVAS_WIDTH) {
         // Player scores
         setScore(prev => {
@@ -260,8 +275,8 @@ const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
         // Reset ball
         newBallX = CANVAS_WIDTH / 2;
         newBallY = CANVAS_HEIGHT / 2;
-        newBallVelX = -INITIAL_BALL_SPEED;
-        newBallVelY = (Math.random() * 2 - 1) * INITIAL_BALL_SPEED;
+        newBallVelX = -BASE_BALL_SPEED * ballSpeed;
+        newBallVelY = (Math.random() * 2 - 1) * BASE_BALL_SPEED * ballSpeed;
       }
       
       // Update game state
@@ -314,6 +329,12 @@ const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
       ctx.textAlign = 'center';
       ctx.fillText(score.player.toString(), CANVAS_WIDTH / 4, 50);
       ctx.fillText(score.ai.toString(), (CANVAS_WIDTH / 4) * 3, 50);
+
+      // Current ball speed indicator
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#888';
+      ctx.textAlign = 'center';
+      ctx.fillText(`Ball Speed: ${ballSpeed.toFixed(1)}x`, CANVAS_WIDTH / 2, CANVAS_HEIGHT - 10);
       
       // Player paddle
       ctx.fillStyle = '#4CAF50';
@@ -382,7 +403,7 @@ const Game: React.FC<GameProps> = ({ hyperparams, isTraining }) => {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [gameState, keys, agent, isTraining, hyperparams, isPaused, gameOver, winner, score]);
+  }, [gameState, keys, agent, isTraining, hyperparams, isPaused, gameOver, winner, score, ballSpeed]);
   
   return (
     <div className="relative">

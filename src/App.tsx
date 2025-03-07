@@ -13,6 +13,7 @@ const App: React.FC = () => {
   });
 
   const [isTraining, setIsTraining] = useState(false);
+  const [ballSpeed, setBallSpeed] = useState(5); // Default ball speed
   
   const handleHyperparamsChange = (params: typeof hyperparams) => {
     setHyperparams(params);
@@ -31,7 +32,8 @@ const App: React.FC = () => {
           <div className="w-full md:w-3/4 flex justify-center">
             <Game 
               hyperparams={hyperparams} 
-              isTraining={isTraining} 
+              isTraining={isTraining}
+              ballSpeed={ballSpeed}
             />
           </div>
           <div className="w-full md:w-1/4">
@@ -40,6 +42,8 @@ const App: React.FC = () => {
               onHyperparamsChange={handleHyperparamsChange}
               isTraining={isTraining}
               onToggleTraining={toggleTraining}
+              ballSpeed={ballSpeed}
+              onBallSpeedChange={setBallSpeed}
             />
           </div>
         </div>

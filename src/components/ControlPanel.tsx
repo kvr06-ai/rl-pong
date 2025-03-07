@@ -18,13 +18,17 @@ interface ControlPanelProps {
   onHyperparamsChange: (params: Hyperparams) => void;
   isTraining: boolean;
   onToggleTraining: () => void;
+  ballSpeed: number;
+  onBallSpeedChange: (speed: number) => void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({ 
   hyperparams, 
   onHyperparamsChange,
   isTraining,
-  onToggleTraining
+  onToggleTraining,
+  ballSpeed,
+  onBallSpeedChange
 }) => {
   // Remove mock data for charts since we're not using them anymore
   
@@ -34,6 +38,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       ...hyperparams,
       [name]: parseFloat(value)
     });
+  };
+
+  const handleBallSpeedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onBallSpeedChange(parseFloat(e.target.value));
   };
 
   return (
@@ -50,6 +58,29 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </div>
 
       <div className="overflow-y-auto flex-grow pr-2">
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2">Game Settings</h3>
+          
+          <div className="mb-3">
+            <label className="block mb-1">
+              Ball Speed: {ballSpeed.toFixed(1)}
+            </label>
+            <input 
+              type="range" 
+              min="1" 
+              max="10" 
+              step="0.5" 
+              value={ballSpeed} 
+              onChange={handleBallSpeedChange} 
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-400">
+              <span>Slow</span>
+              <span>Fast</span>
+            </div>
+          </div>
+        </div>
+
         <div className="mb-4">
           <h3 className="text-lg font-semibold mb-2">Hyperparameters</h3>
           
