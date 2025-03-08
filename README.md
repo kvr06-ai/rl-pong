@@ -7,12 +7,21 @@
 
 An interactive web application that demonstrates reinforcement learning principles using the classic Pong game. Play against an AI paddle that learns in real-time while adjusting hyperparameters to see how they affect the learning process.
 
+## 🎮 Live Demo
+
+**[Try RL-Pong now on my website!](https://kaushikrajan.me/projects/rl-pong)**
+
+Experience the game without any installation - adjust the ball speed, train the AI in real-time, and see reinforcement learning in action.
+
+For more of my AI and machine learning projects, visit [kaushikrajan.me](https://kaushikrajan.me) - where I share interactive demos, technical articles, and other implementations at the intersection of AI and interactive media.
+
 ## Overview
 
 RL-Pong allows users to:
 - Play the classic Pong game against an AI opponent
 - Watch and interact with a reinforcement learning agent as it improves over time
 - Adjust hyperparameters in real-time and observe their effects on the AI's learning
+- Control game difficulty with a customizable ball speed slider
 - Learn about reinforcement learning concepts through an interactive experience
 
 ## Features
@@ -20,6 +29,7 @@ RL-Pong allows users to:
 - **Classic Pong Gameplay**: Control your paddle with arrow keys and compete against the AI
 - **Deep Q-Learning Implementation**: AI uses a neural network to learn optimal strategies
 - **Interactive Hyperparameter Adjustment**: Modify learning parameters in real-time
+- **Adjustable Game Difficulty**: Change the ball speed to make the game easier or harder
 - **Educational Resources**: Built-in explanations of RL concepts and parameters
 - **Game Controls**: Pause, resume, and reset functionality
 - **Responsive Design**: Works on desktop and mobile devices
@@ -194,4 +204,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 - This project was created as an educational tool to help understand reinforcement learning concepts
-- Inspired by classic Pong gameplay and modern RL techniques 
+- Inspired by classic Pong gameplay and modern RL techniques
+- Special thanks to the TensorFlow.js and React communities for their excellent libraries and documentation
+- For more of my projects, tutorials, and articles, visit [kaushikrajan.me](https://kaushikrajan.me) 
